@@ -11,21 +11,21 @@ class Solution(object):
         :type head: RandomListNode
         :rtype: RandomListNode
         """
-        ll = {}
-        if not head: return None
+        if not head:
+            return None
         root = RandomListNode(0)
-        node = root
-        while head:
-            if head not in ll:
-                cur = RandomListNode(head.label)
-                ll[head] = cur
-            if head.random not in ll:
-                random = RandomListNode(head.random.label) if head.random else None
-                ll[head.random] = random
-            node.next = ll[head]
-            node.next.random = ll[head.random]
-            
-            node = node.next
-            head = head.next    
+        prev = root
+        cur = head
+        visited = {}
+        while cur:
+            if cur not in visited:
+                visited[cur] = RandomListNode(cur.label)
+            prev.next = visited[cur]
+            if cur.random and cur.random not in visited:
+                visited[cur.random] = RandomListNode(cur.random.label)
+            if cur.random:
+                visited[cur].random = visited[cur.random] 
+            prev = visited[cur]
+            cur = cur.next
         return root.next
-
+        
