@@ -16,7 +16,7 @@ class Solution(object):
             for j in range(1,m+1):
                 if p[j-1] == "*":
                     if j > 1:
-                        if dp[i][j-1] or dp[i][j-2]:
+                        if dp[i][j-2]:
                             dp[i][j] = True
                         elif dp[i-1][j] and (s[i-1] == p[j-2] or p[j-2] == '.'):
                             dp[i][j] = True
