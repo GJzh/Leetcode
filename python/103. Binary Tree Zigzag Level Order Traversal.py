@@ -12,25 +12,19 @@ class Solution(object):
         :rtype: List[List[int]]
         """
         if root == None: return []
+        res = []
         cur = [root]
-        flag = False
-        res = [[root.val]]
+        flag = True
         while len(cur) > 0:
             temp = []
-            while len(cur) > 0:
-                node = cur.pop()
-                if flag:
-                    if node.left: temp.append(node.left)
-                    if node.right: temp.append(node.right)
-                else:
-                    if node.right: temp.append(node.right)
-                    if node.left: temp.append(node.left)
-            nums = []
-            for node in temp:
-                nums.append(node.val)
-            if len(nums) > 0:
-                res.append(nums)
-            flag = not flag
+            res.append([])
+            if flag:
+                for i in range(len(cur)): res[-1].append(cur[i].val)
+            else:
+                for i in range(len(cur)-1,-1,-1): res[-1].append(cur[i].val)
+            for node in cur:
+                if node.left: temp.append(node.left)
+                if node.right: temp.append(node.right)
             cur = temp
+            flag = not flag
         return res
-
