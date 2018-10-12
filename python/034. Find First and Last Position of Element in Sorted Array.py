@@ -18,7 +18,7 @@ class Solution(object):
         if left == n or nums[left] != target: return [-1, -1]
         a = left
         # find the last element nums[i] such taht nums[i] <= target
-        left, right = 0, n-1
+        right = n-1
         while left <= right:
             mid = (left + right) / 2
             if nums[mid] <= target:
