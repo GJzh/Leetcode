@@ -3,16 +3,18 @@ class Solution(object):
         """
         :type nums: List[int]
         :rtype: List[int]
+        dp1[i] = nums[0] * ... * nums[i-1]
+        dp2[i] = nums[i] * ... * nums[n-1]
         """
         n = len(nums)
-        dp1 = [1]
-        dp2 = [1]
+        if n < 2: return 0
+        dp1 = [1] * (n+1)
+        dp2 = [1] * (n+1)
+        for i in range(1,n+1):
+            dp1[i] = dp1[i-1] * nums[i-1]
+        for i in range(n-1,-1,-1):
+            dp2[i] = dp2[i+1] * nums[i]
+        res = [0] * n
         for i in range(n):
-            dp1.append(dp1[-1] * nums[i])
-        for j in range(n-1,-1,-1):
-            dp2.append(dp2[-1] * nums[j])
-        res = []
-        for k in range(n):
-            res.append(dp1[k] * dp2[n-k-1])
+            res[i] = dp1[i] * dp2[i+1]
         return res
-
