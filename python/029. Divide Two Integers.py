@@ -15,7 +15,7 @@ class Solution(object):
             temp2 <<= 1
             c <<= 1
         while temp1 >= val2:
-            while temp1 >= temp2:
+            if temp1 >= temp2:
                 temp1 -= temp2
                 res += c
             temp2 >>= 1
