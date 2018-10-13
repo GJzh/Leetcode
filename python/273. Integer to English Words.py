@@ -5,10 +5,10 @@ class Solution:
         :rtype: str
         """
         if num == 0: return "Zero"
-        diction = ["Billion", "Million", "Thousand", ""];
+        diction = ["Billion", "Million", "Thousand", ""]
         digits_10 = ["", "", "Twenty", "Thirty", "Forty", "Fifty",  "Sixty", "Seventy", "Eighty", "Ninety"]
         digits_1 = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen",
-                    "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+                    "Sixteen", "Seventeen", "Eighteen", "Nineteen"]
         digits = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"]
         res = ""
         while num > 0: 
