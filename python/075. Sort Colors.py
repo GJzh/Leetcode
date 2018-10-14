@@ -3,6 +3,10 @@ class Solution(object):
         """
         :type nums: List[int]
         :rtype: void Do not return anything, modify nums in-place instead.
+        k < left -> nums[k] = 0
+        left <= k < mid -> nums[k] = 1
+        k > right -> nums[k] = 2
+        mid <= k <= right -> nums[k] unknown
         """
         n = len(nums)
         if not n: return
