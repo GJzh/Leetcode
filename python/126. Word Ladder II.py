@@ -16,7 +16,7 @@ class Solution:
     def dfs(self, beginWord, endWord, cur, paths):
         if beginWord == endWord:
             cur.append(beginWord)
-            paths.append(cur.copy())
+            paths.append(cur[::-1])
             cur.pop()
             return
         cur.append(endWord)
@@ -60,6 +60,4 @@ class Solution:
             cur = []
             paths = []
             self.dfs(beginWord, endWord, cur, paths)
-            for path in paths:
-                res.append(path[::-1])
         return res
