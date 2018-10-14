@@ -1,53 +1,48 @@
-class Solution:
-    class Node:
+class Solution(object):
+    class Node():
         def __init__(self):
-            self.str = ""
-            self.ch = []
-            for i in range(26):
-                self.ch.append(None)
-    
-    def insertWord(self, node, word):
-        #print(type(word), type(word[0]))
+            self.ch = [None] * 26
+            self.word = ""
+    def addWords(self, root, word):
+        node = root
         for c in word:
-            if node.ch[ord(c)-ord('a')] == None:
-                node.ch[ord(c)-ord('a')] = self.Node()
-            node = node.ch[ord(c)-ord('a')]
-        node.str = word
-                
-    def dfs(self, node, i, j):
-        idx = ord(self.board[i][j])-ord('a')
+            idx = ord(c) - ord('a')
+            if not node.ch[idx]:
+                node.ch[idx] = self.Node()
+            node = node.ch[idx]
+        node.word = word
+        
+    def dfs(self, node, i, j, visited, res):
+        idx = ord(self.board[i][j]) - ord('a')
         if not node.ch[idx]: return
-        self.hash[(i,j)] = True
+        visited[(i,j)] = True
         node = node.ch[idx]
-        if node.str != "": 
-            self.res.append(node.str)
-            node.str = ""
+        if node.word != "": res.add(node.word)
         m = len(self.board)
         n = len(self.board[0])
-        if i-1>=0 and (i-1,j) not in self.hash: self.dfs(node, i-1, j)
-        if i+1<m and (i+1,j) not in self.hash: self.dfs(node, i+1, j)
-        if j-1>=0 and (i,j-1) not in self.hash: self.dfs(node, i, j-1)
-        if j+1<n and (i,j+1) not in self.hash: self.dfs(node, i, j+1)
-        del(self.hash[(i,j)])
-    
+        if i-1 >= 0 and (i-1,j) not in visited: self.dfs(node, i-1, j, visited, res)
+        if i+1 < m and (i+1,j) not in visited: self.dfs(node, i+1, j, visited, res)
+        if j-1 >= 0 and (i,j-1) not in visited: self.dfs(node, i, j-1, visited, res)
+        if j+1 < n and (i,j+1) not in visited: self.dfs(node, i, j+1, visited, res)    
+        del visited[(i,j)]
+        
     def findWords(self, board, words):
         """
         :type board: List[List[str]]
         :type words: List[str]
         :rtype: List[str]
         """
+        m = len(board)
+        if not m: return []
+        n = len(board[0])
+        if not n: return []
+        self.board = board
         root = self.Node()
         for word in words:
-            self.insertWord(root, word)
-        self.res = []
-        self.hash = {}
-        self.board = board
-        m = len(board)
-        if m == 0: return []
-        n = len(board[0])
-        if n == 0: return []
+            self.addWords(root, word)
+        res = set()
+        visited = {}
         for i in range(m):
             for j in range(n):
-                self.dfs(root, i, j)
-        return self.res
-
+                self.dfs(root, i, j, visited, res)
+        return list(res)
