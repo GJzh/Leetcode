@@ -8,11 +8,20 @@ class Solution(object):
         if n == 0: return -1
         end, nextEnd = 0, 0
         cnt = 0
+        res = []
         for i in range(n-1):
-            nextEnd = max(nextEnd, i + nums[i])
+            if i + nums[i] > nextEnd:
+                nextEnd = i + nums[i]
+                cur = i
             if i == end:
                 if nextEnd == end: return -1
+                res.append(cur)
                 end  = nextEnd
                 cnt += 1
-        if nextEnd >= n-1: return cnt
-        else: return -1
+        if nextEnd >= n-1: 
+            # print out the path
+            res.append(n-1)
+            print res
+            return cnt
+        else: 
+            return -1
