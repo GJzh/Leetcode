@@ -19,24 +19,29 @@ class Solution(object):
 Solution 2:
 # O(nlogn)
 class Solution(object):
+    def upperBound(self, q, target):
+        left, right = 0, len(q)-1
+        while left <= right:
+            mid = (left+right)/2
+            if q[mid] >= target:
+                right = mid - 1
+            else:
+                left = mid + 1
+        return left
+        
     def lengthOfLIS(self, nums):
         """
         :type nums: List[int]
         :rtype: int
         """
-        dp = []
-        for i in range(len(nums)):
-            low = 0
-            high = len(dp) - 1
-            while low <= high:
-                mid = (low + high) // 2
-                if (dp[mid] >= nums[i]):
-                    high = mid-1
-                else:
-                    low = mid + 1
-            if low >= len(dp):
-                dp.append(nums[i])
+        n = len(nums)
+        if n == 0: return 0
+        q = []
+        for num in nums:
+            pos = self.upperBound(q, num)
+            if pos >= len(q):
+                q.append(num)
             else:
-                dp[low] = nums[i]
-        return len(dp)
+                q[pos] = num
+        return len(q)
 
