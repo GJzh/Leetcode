@@ -1,4 +1,4 @@
-Solution 1 (DFS):
+Solution 1 (DFS, O(e + e * q), e: the number of edge, q: the number of node):
 class Solution(object):
     def dfs(self, graph, visited, x, y):
         if x == y: return 1.0, True
@@ -41,7 +41,7 @@ class Solution(object):
                 del visited[x]
         return res
 
-Solution 2 (union find):
+Solution 2 (union find, O(e + q)):
 class Solution(object):   
     def find(self, parents, k):
         val = 1.0
