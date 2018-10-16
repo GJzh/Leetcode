@@ -88,3 +88,58 @@ class Codec:
         vals = iter(data.split())
         return doit()
 
+Solution 3:
+import struct
+class Codec:
+    def _serialize(self, node):
+        self.res += struct.pack('i', node.val)
+        if node.left == None and node.right == None:
+            self.res += "#"
+            return
+        elif node.right == None:
+            self.res += "l"
+        elif node.left == None:
+            self.res += "r"
+        else:
+            self.res += "@"
+        if node.left:
+            self._serialize(node.left)
+        if node.right:
+            self._serialize(node.right)
+        
+        
+    def serialize(self, root):
+        """Encodes a tree to a single string.
+        
+        :type root: TreeNode
+        :rtype: str
+        """
+        if root == None: return ""
+        self.res = ""
+        self._serialize(root)
+        return self.res
+
+    def _deserialize(self, data):
+        val = struct.unpack('i', data[self.idx:self.idx+4])[0]
+        flag = data[self.idx+4]
+        node = TreeNode(val)
+        self.idx += 5
+        if flag == '#': return node
+        if flag == 'l':
+            node.left = self._deserialize(data)
+        elif flag == 'r':
+            node.right = self._deserialize(data)
+        else:
+            node.left = self._deserialize(data)
+            node.right = self._deserialize(data)
+        
+        return node
+    def deserialize(self, data):
+        """Decodes your encoded data to tree.
+        
+        :type data: str
+        :rtype: TreeNode
+        """
+        if data == "": return None
+        self.idx = 0
+        return self._deserialize(data)
