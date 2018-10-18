@@ -6,7 +6,7 @@ class Solution(object):
         """
         n = len(nums)
         if n < 3: return []
-        nums.sort();
+        nums.sort()
         res = []
         i = 0
         while i <= n-3:
