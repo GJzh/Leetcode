@@ -15,9 +15,8 @@ class Solution(object):
         """
         n = len(costs)
         if n == 0: return 0
-        m = 3
-        status = [0] * m
+        status = copy.copy(costs[0])
         self.costs = costs
-        for i in range(n):
+        for i in range(1, n):
             status = self.update(status, i)
         return min(status)
