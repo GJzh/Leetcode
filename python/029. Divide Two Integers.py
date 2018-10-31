@@ -5,24 +5,27 @@ class Solution(object):
         :type divisor: int
         :rtype: int
         """
-        val1 = dividend if dividend >= 0 else -dividend
-        val2 = divisor if divisor >= 0 else -divisor
-        if val1 < val2: return 0
-        temp1, temp2 = val1, val2
-        c = 1
-        res = 0
-        while temp2 <= val1:
-            temp2 <<= 1
-            c <<= 1
-        while temp1 >= val2:
-            if temp1 >= temp2:
-                temp1 -= temp2
-                res += c
-            temp2 >>= 1
-            c >>= 1
-        
-        if dividend > 0 and divisor < 0 or dividend < 0 and divisor > 0:
-            res = -res
-        if res < - 2 ** 31 or res > 2 ** 31 - 1:
-            return 2 ** 31 - 1
-        else: return res
+        ans = 0
+        if (dividend > 0 and divisor < 0) or (dividend < 0 and divisor > 0):
+            sign = -1
+        else:
+            sign = 1
+        dividend, divisor = abs(dividend), abs(divisor)
+        val1, val2 = dividend, divisor
+        base = 1
+        while val2 < val1:
+            val2 <<= 1
+            base <<= 1
+        while val2 >= divisor:
+            if val1 >= val2:
+                ans += base
+                val1 -= val2
+            val2 >>= 1
+            base >>= 1
+        ans *= sign
+        lowerBound = - 2 ** 31
+        upperBound = 2 ** 31 -1
+        if ans < lowerBound or ans > upperBound:
+            return upperBound
+        else:
+            return ans
