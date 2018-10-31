@@ -5,53 +5,43 @@ class Solution(object):
         :type words: List[str]
         :rtype: List[int]
         """
-        n = len(s)
-        if n == 0: return []
         if len(words) == 0: return []
-        length = len(words[0])
-        if length == 0: return []
-        # get frequencies
+        m = len(words[0])
         freq = {}
         for word in words:
-            if word not in freq:
-                freq[word] = 1
-            else:
-                freq[word] += 1
-        res = []
-        
-        for start in range(length):
-            left, right = start, start
-            cnt = len(words)
-            tempFreq = {}
-            while right <= n - length:
-                t = s[right:right+length]
-                if t in freq:
-                    if t in tempFreq:
-                        tempFreq[t] += 1  
-                    else:
-                        tempFreq[t] = 1
-                    if freq[t] - tempFreq[t] >= 0:
-                        cnt -= 1
-                    else:
-                        while freq[t] < tempFreq[t]:
-                            word = s[left:left+length]
-                            tempFreq[word] -= 1
-                            if tempFreq[word] < freq[t]:
-                                cnt += 1
-                            left += length
-                    if cnt == 0:
-                        res.append(left)
-                        word = s[left:left+length]
-                        tempFreq[word] -= 1
-                        cnt += 1
-                        left += length
-                        
+            if word not in freq: freq[word] = 0
+            freq[word] += 1
+        total = len(freq)
+        ans = []
+        for offset in range(m):
+            status = {}
+            start = end = offset
+            cnt = total
+            while end + m <= len(s):
+                word = s[end:end+m]
+                if word not in freq:
+                    status = {}
+                    cnt = total
+                    start = end = end + m
                 else:
-                    tempFreq = {}
-                    left = right + length
-                    cnt = len(words)
-                    
-                
-                
-                right = right + length
-        return res
+                    if word not in status:
+                        status[word] = 1
+                    else:
+                        status[word] += 1
+                    if status[word] == freq[word]:
+                        cnt -= 1
+                        if cnt == 0: 
+                            ans.append(start)
+                            status[s[start:start+m]] -= 1
+                            start += m
+                            cnt += 1
+                    elif status[word] > freq[word]:
+                        while status[word] > freq[word]:
+                            prevWord = s[start:start+m]
+                            if status[prevWord] == freq[prevWord]: cnt += 1
+                            status[prevWord] -= 1
+                            start += m
+                    else:
+                        pass
+                    end += m
+        return ans
