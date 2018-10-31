@@ -1,15 +1,18 @@
 class Solution(object):
-    def dfs(self, stones, idx, last_jump, max_jump, status):
-        if idx == len(stones)-1: return True
-        for i in range(idx+1, len(stones)):
-            jump = stones[i] - stones[idx]
-            if jump > max_jump: break
-            if jump >= last_jump-1 and jump <= last_jump+1 and (idx, jump) not in status:
-                if self.dfs(stones, i, jump, max_jump, status):
+    def dfs(self, stones, pos, lastJump, visited):
+        if pos == len(stones) - 1: return True
+        if (pos, lastJump) in visited: return False
+        i = pos + 1
+        while i < len(stones):
+            jump = stones[i] - stones[pos]
+            if jump > lastJump + 1: break
+            if jump >= lastJump - 1 and jump <= lastJump + 1:
+                if self.dfs(stones, i, jump, visited):
                     return True
-                else:
-                    status[(idx, jump)] = True
+            i += 1
+        visited[(pos, lastJump)] = True
         return False
+        
     
     def canCross(self, stones):
         """
@@ -21,8 +24,7 @@ class Solution(object):
         distance_max = (n-1) * n / 2 >= stones[-1]
         """
         n = len(stones)
-        max_distance = (n-1) * n / 2
-        if max_distance < stones[-1]: return False
-        max_jump = min(n-1, math.sqrt(2 * stones[-1]) + 1)
-        status = {}
-        return self.dfs(stones, 1, 1, max_jump, status)
+        maxDistance = n * (n-1) / 2
+        if maxDistance < stones[-1]: return False
+        visited = {}
+        return self.dfs(stones, 1, 1, visited)
