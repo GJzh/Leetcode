@@ -9,22 +9,18 @@ class NumMatrix(object):
         """
         m = len(matrix)
         if m == 0: 
-            self.dp = None 
-            return 
+            self.sums = [0]
+            return
         n = len(matrix[0])
         if n == 0: 
-            self.dp = None 
+            self.sums = [0]
             return
-        dp = [[0 for j in range(n)] for i in range(m)]
-        dp[0][0] = matrix[0][0]
-        for i in range(1,m):
-            dp[i][0] = dp[i-1][0] + matrix[i][0]
-        for j in range(1,n):
-            dp[0][j] = dp[0][j-1] + matrix[0][j]
-        for i in range(1,m):
-            for j in range(1,n):
-                dp[i][j] = matrix[i][j] + dp[i-1][j] + dp[i][j-1] - dp[i-1][j-1]
-        self.dp = dp
+        self.sums = [[0 for j in range(n+1)] for i in range(m+1)]
+        for i in range(1, m+1):
+            for j in range(1, n+1):
+                self.sums[i][j] = matrix[i-1][j-1] + self.sums[i-1][j] + self.sums[i][j-1] - self.sums[i-1][j-1]
+        return
+        
 
     def sumRegion(self, row1, col1, row2, col2):
         """
@@ -34,12 +30,4 @@ class NumMatrix(object):
         :type col2: int
         :rtype: int
         """
-        if self.dp == None: return [None]
-        if row1 == 0 and col1 == 0:
-            return self.dp[row2][col2]
-        elif row1 == 0:
-            return self.dp[row2][col2] - self.dp[row2][col1-1]
-        elif col1 == 0:
-            return self.dp[row2][col2] - self.dp[row1-1][col2]
-        else:
-            return self.dp[row2][col2] - self.dp[row1-1][col2] - self.dp[row2][col1-1] + self.dp[row1-1][col1-1]
+        return self.sums[row2+1][col2+1] - self.sums[row2+1][col1] - self.sums[row1][col2+1] + self.sums[row1][col1]
