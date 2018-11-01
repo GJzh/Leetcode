@@ -1,14 +1,15 @@
 class Solution(object):
-    def dfs(self, nums, idx, cur, res):
-        if idx >= len(nums): return
+    def dfs(self, nums, idx, cur, ans):
         visited = {}
-        for i in range(idx, len(nums)):
-            if nums[i] >= cur[-1] and nums[i] not in visited:
-                visited[nums[i]] = True
-                cur.append(nums[i])
-                res.append(copy.copy(cur))
-                self.dfs(nums, i+1, cur, res)
+        while idx < len(nums):
+            val = nums[idx]
+            if val >= cur[-1] and val not in visited:
+                visited[val] = True
+                cur.append(val)
+                if len(cur) >= 3: ans.append(cur[1:])
+                self.dfs(nums, idx + 1, cur, ans)
                 cur.pop()
+            idx += 1
         return
                 
     def findSubsequences(self, nums):
@@ -20,12 +21,7 @@ class Solution(object):
         """
         n = len(nums)
         if n == 0: return []
-        res = []
-        cur = []
-        visited = {}
-        for i in range(n-1):
-            if nums[i] not in visited:
-                visited[nums[i]] = True
-                cur = [nums[i]]
-                self.dfs(nums, i+1, cur, res)
-        return res
+        cur = [float('-inf')]
+        ans = []
+        self.dfs(nums, 0, cur, ans)
+        return ans
