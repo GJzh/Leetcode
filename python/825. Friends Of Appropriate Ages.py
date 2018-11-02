@@ -5,26 +5,19 @@ class Solution(object):
         :rtype: int
         """
         n = len(ages)
+        if n == 0: return 0
         ages.sort()
-        pos = -1
-        for i in range(n):
-            if ages[i] >= 100:
-                pos = i
-                break
-        print ages
-        res = 0
-        left, right = 0, 0
-        while left < n:
-            age = ages[left]
-            cnt = 0
-            while left+cnt < n and ages[left+cnt] == age:
-                cnt += 1
-            upperBound = 2 * age - 14
-            while right < n and ages[right] < upperBound:
-                right += 1
-            if age <= 100:
-                res += cnt * max(0, right - left - 1)
-            else:
-                res += cnt * max(0, right - max(pos, left+1) )
-            left += cnt
-        return res
+        ans = 0
+        pos = 0
+        start = 0
+        while pos < n:
+            nextPos = pos
+            while nextPos < n and ages[nextPos] == ages[pos]:
+                nextPos += 1
+            num = nextPos - pos
+            lowerBound = 0.5 * ages[pos] + 7
+            while start < n and ages[start] <= lowerBound:
+                start += 1
+            ans += max(0, (nextPos - start - 1) * num)
+            pos = nextPos
+        return ans
