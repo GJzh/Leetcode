@@ -1,45 +1,48 @@
-class Solution:
-    def lowerBound(self, v, val):
-        left = 0
-        right = len(v)-1
+class Solution(object):
+    class BIT():
+        def __init__(self, n):
+            self.v = [0] * (n+1)
+        
+        def getSum(self, k):
+            ans = 0
+            while k > 0:
+                ans += self.v[k]
+                k -= (k & -k)
+            return ans
+        
+        def update(self, k):
+            while k < len(self.v):
+                self.v[k] += 1
+                k += (k & -k)
+    
+    def lowerBound(self, v, target):
+        left, right = 0, len(v)-1
         while left <= right:
-            mid = (left + right) // 2
-            if v[mid] < val:
-                left = mid+1
+            mid = (left + right) / 2
+            if v[mid] < target:
+                left = mid + 1
             else:
-                right = mid-1
-        return right+1
-        
-    def getSum(self, bit, index):
-        res = 0
-        while index > 0:
-            res += bit[index]
-            index -= index & (-index)
-        return res
-            
-    def update(self, bit, index):
-        while index < len(bit):
-            bit[index] += 1
-            index += index & (-index)
-        
+                right = mid - 1
+        return v[right]
+    
     def reversePairs(self, nums):
         """
         :type nums: List[int]
         :rtype: int
         """
         n = len(nums)
-        if not n: return 0
-        v = nums.copy()
+        v = copy.copy(nums)
         v.sort()
-        val2Id = {}
+        ranks = {}
         for i in range(n):
-            val2Id[v[i]] = i + 1
-            
-        res = 0
-        bit = [0] * (n+1)
-        for i in range(n-1,-1,-1):
-            if nums[i] / 2 > v[0]:
-                index = self.lowerBound(v, nums[i] / 2)
-                res += self.getSum(bit, index)
-            self.update(bit, val2Id[nums[i]])
-        return res
+            ranks[v[i]] = i + 1
+        bit = self.BIT(n)
+        ans = 0
+        for i in range(n-1, -1, -1):
+            target = nums[i] / 2.0
+            if target > v[0]:
+                num = self.lowerBound(v, target)
+                rank = ranks[num]
+                ans += bit.getSum(rank)
+            bit.update(ranks[nums[i]])
+        return ans
