@@ -43,12 +43,30 @@ class Solution(object):
 
 Solution 2 (union find, O(e + q)):
 class Solution(object):   
-    def find(self, parents, k):
+    def find(self, parents, variable):
         val = 1.0
-        while parents[k][0] != k:
-            val *= parents[k][1]
-            k = parents[k][0]
-        return k, val
+        while parents[variable][0] != variable:
+            val *= parents[variable][1]
+            variable = parents[variable][0]
+        return variable, val
+
+    def merge(self, zeros, parents, variable1, variable2, val):
+        if val == 0: 
+            zeros[variable1] = True
+            return
+        if variable1 not in parents and variable2 not in parents:
+            parents[variable1] = (variable2, val)
+            parents[variable2] = (variable2, 1.0)
+        elif variable1 not in parents:
+            parents[variable1] = (variable2, val)
+        elif variable2 not in parents:
+            parents[variable2] = (variable1, 1.0 / val)
+        else:
+            var1, val1 = self.find(parents, variable1)
+            var2, val2 = self.find(parents, variable2)
+            parents[var1] = (var2, val * val2 / val1)
+        return
+            
     
     def calcEquation(self, equations, values, queries):
         """
@@ -57,30 +75,23 @@ class Solution(object):
         :type queries: List[List[str]]
         :rtype: List[float]
         """
+        zeros = {}
         parents = {}
         for i in range(len(equations)):
-            x, y = equations[i]
+            variable1 = equations[i][0]
+            variable2 = equations[i][1]
             val = values[i]
-            if x not in parents and y not in parents: 
-                parents[x] = (y, val)
-                parents[y] = (y, 1.0)
-            elif x not in parents:
-                parents[x] = (y, val)
-            elif y not in parents:
-                parents[y] = (x, 1.0 / val)    
+            self.merge(zeros, parents, variable1, variable2, val)
+        ans = []
+        for variable1, variable2 in queries:
+            if variable1 in zeros: val = 0
+            elif variable1 not in parents or variable2 not in parents: val = -1.0
             else:
-                k1, val1 = self.find(parents, x)
-                k2, val2 = self.find(parents, y)
-                parents[k1] = (k2, val * val2 / val1)
-        res = []
-        for x, y in queries:
-            if x not in parents or y not in parents: 
-                res.append(-1.0)
-            else:
-                k1, val1 = self.find(parents, x)
-                k2, val2 = self.find(parents, y)
-                if k1 == k2:
-                    res.append(val1 / val2)
+                var1, val1 = self.find(parents, variable1)
+                var2, val2 = self.find(parents, variable2)
+                if var1 == var2:
+                    val = 1.0 * val1 / val2
                 else:
-                    res.append(-1.0)
-        return res
+                    val = -1.0
+            ans.append(val)
+        return ans
