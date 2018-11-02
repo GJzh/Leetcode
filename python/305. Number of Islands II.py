@@ -2,7 +2,6 @@ Solution: Weighted Union Find, time: O(klog(m*n)) space(m*n)
 class Solution(object):
     class Islands():
         def __init__(self, m, n):
-            self.islands = [0] * (m * n)
             self.sz = [1] * (m * n)
             self.m = m
             self.n = n
