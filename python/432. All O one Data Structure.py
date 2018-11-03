@@ -1,82 +1,22 @@
 class AllOne(object):
     class Node():
-        def __init__(self, val):
-            self.val = val
+        def __init__(self):
             self.keys = {}
-            self.prev = None
+            self.val = 1
             self.next = None
+            self.prev = None
             
     def __init__(self):
         """
         Initialize your data structure here.
         """
-        self.head = None
-        self.tail = None
         self.status = {}
-    def addHead(self):
-        node = self.Node(1)
-        if self.head:
-            node.next = self.head
-            self.head.prev = node
-            self.head = node
-        else:
-            self.head = self.Node(1)
-            self.tail = self.head
-            
-    def remove(self, key, node):
-        del node.keys[key]
-        if len(node.keys) == 0:
-            if node == self.head:
-                self.head = self.head.next
-            elif node == self.tail:
-                node.prev.next = None
-                self.tail = node.prev
-            else:
-                node.prev.next = node.next
-                node.next.prev = node.prev
-            del node
-            
-    def upgrade(self, key, node):
-        if node == self.tail:
-            self.tail = self.Node(node.val+1)
-            self.tail.keys[key] = True
-            self.tail.prev = node
-            node.next = self.tail
-            newNode = self.tail
-        else:
-            if node.next.val == node.val+1:
-                node.next.keys[key] = True
-                newNode = node.next
-            else:
-                newNode = self.Node(node.val+1)
-                newNode.keys[key] = True
-                newNode.prev = node
-                newNode.next = node.next
-                node.next.prev = newNode
-                node.next = newNode
-        self.remove(key, node)
-        return newNode
-        
-    def degrade(self, key, node):
-        if node == self.head:
-            self.head = self.Node(node.val-1)
-            self.head.keys[key] = True
-            self.head.next = node
-            node.prev = self.head
-            newNode = self.head
-        else:
-            if node.prev.val == node.val-1:
-                node.prev.keys[key] = True
-                newNode = node.prev
-            else:
-                newNode = self.Node(node.val-1)
-                newNode.keys[key] = True
-                newNode.prev = node.prev
-                newNode.next = node
-                node.prev.next = newNode
-                node.prev = newNode
-        self.remove(key, node)
-        return newNode
+        self.head = self.Node()
+        self.head.val = 0
+        self.tail = self.Node()
+        self.tail.val = float('inf')
+        self.head.next = self.tail
+        self.tail.prev = self.head
         
     def inc(self, key):
         """
@@ -85,12 +25,37 @@ class AllOne(object):
         :rtype: void
         """
         if key not in self.status:
-            if self.head == None or self.head.val != 1:
-                self.addHead()
-            self.head.keys[key] = True
-            self.status[key] = self.head
+            if self.head.next.val == 1:
+                self.head.next.keys[key] = True
+                self.status[key] = self.head.next
+            else:
+                node = self.Node()
+                self.status[key] = node
+                node.keys[key] = True
+                node.next = self.head.next
+                node.prev = self.head
+                self.head.next.prev = node
+                self.head.next = node
         else:
-            self.status[key] = self.upgrade(key, self.status[key])
+            node = self.status[key]
+            val = self.status[key].val
+            del node.keys[key]
+            if node.next.val == val + 1:
+                node.next.keys[key] = True
+                self.status[key] = node.next
+            else:
+                newNode = self.Node()
+                newNode.keys[key] = True
+                newNode.val = val + 1
+                newNode.next = node.next
+                newNode.prev = node
+                node.next.prev = newNode
+                node.next = newNode
+                self.status[key] = newNode
+            if len(node.keys) == 0:
+                node.prev.next = node.next
+                node.next.prev = node.prev
+                del node
 
     def dec(self, key):
         """
@@ -101,29 +66,53 @@ class AllOne(object):
         if key not in self.status:
             return
         else:
-            if self.status[key].val == 1:
-                self.remove(key, self.status[key])
-                del self.status[key]
+            node = self.status[key]
+            val = self.status[key].val
+            del node.keys[key]
+            if node.prev.val == val - 1:
+                if val - 1 > 0:
+                    node.prev.keys[key] = True
+                    self.status[key] = node.prev
+                else:
+                    del self.status[key]
             else:
-                self.status[key] = self.degrade(key, self.status[key])
-        
+                newNode = self.Node()
+                newNode.keys[key] = True
+                newNode.val = val - 1
+                newNode.next = node
+                newNode.prev = node.prev
+                node.prev.next = newNode
+                node.prev = newNode
+                self.status[key] = newNode
+            if len(node.keys) == 0:
+                node.prev.next = node.next
+                node.next.prev = node.prev
+                del node
 
     def getMaxKey(self):
         """
         Returns one of the keys with maximal value.
         :rtype: str
         """
-        if self.tail:
-            return self.tail.keys.keys()[0]
-        else:
+        if self.head.next == self.tail:
             return ""
+        else:
+            return self.tail.prev.keys.items()[0][0]
 
     def getMinKey(self):
         """
         Returns one of the keys with Minimal value.
         :rtype: str
         """
-        if self.head:
-            return self.head.keys.keys()[0]
-        else:
+        if self.head.next == self.tail:
             return ""
+        else:
+            return self.head.next.keys.items()[0][0]
+        
+
+# Your AllOne object will be instantiated and called as such:
+# obj = AllOne()
+# obj.inc(key)
+# obj.dec(key)
+# param_3 = obj.getMaxKey()
+# param_4 = obj.getMinKey()
