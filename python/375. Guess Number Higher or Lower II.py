@@ -3,6 +3,7 @@ class Solution(object):
         """
         :type n: int
         :rtype: int
+        dp[i][j]: the minimum money to guess the number in [i,j]
         """
         cnt = 0
         dp = [[0 for j in range(n+1)] for i in range(n+1)]
