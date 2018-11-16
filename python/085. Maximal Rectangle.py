@@ -1,3 +1,4 @@
+time: O(m * n), space: O(n)
 class Solution(object):
     def maximalRectangle(self, matrix):
         """
